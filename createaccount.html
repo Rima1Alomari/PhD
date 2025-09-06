@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg1.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            background-size: cover;
+            direction: inherit;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        .form-box {
+            background: linear-gradient(to right, #3b3b4f, #a2a0b8);
+            padding: 30px;
+            border-radius: 10px;
+            width: 340px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-box h2 {
+            color: #0dcaf0;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .input-box {
+            margin-bottom: 15px;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background: white;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s ease;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-box input:focus {
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background: transparent;
+            font-size: 16px;
+            font-weight: bold;
+            color: #0dcaf0;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #0dcaf0;
+        }
+
+        .submit-button:hover {
+            background: #0dcaf0;
+            transform: scale(1.05);
+            color: white;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .form-box {
+                width: 90%;
+            }
+            .logo {
+                width: 60px;
+            }
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="Logo" class="logo">
+        <div class="form-box">
+            <h2 data-description="عنوان صفحة إنشاء الحساب">إنشاء حساب</h2>
+          
+            <div class="input-box">
+              <input type="text" id="fullname" placeholder="الاسم الكامل" required data-description="حقل إدخال الاسم الكامل للمستخدم">
+            </div>
+          
+            <div class="input-box">
+              <input type="email" id="email" placeholder="البريد الإلكتروني" required data-description="حقل إدخال البريد الإلكتروني للمستخدم">
+            </div>
+          
+            <div class="input-box">
+              <input type="text" id="phone" placeholder="رقم الهاتف" required data-description="حقل إدخال رقم الهاتف للمستخدم">
+            </div>
+          
+            <div class="input-box">
+              <input type="password" id="password" placeholder="كلمة المرور" required data-description="حقل إدخال كلمة المرور للمستخدم">
+            </div>
+          
+            <div class="input-box">
+              <input type="password" id="confirm-password" placeholder="تأكيد كلمة المرور" required data-description="حقل تأكيد كلمة المرور المدخلة">
+            </div>
+          
+            <button class="submit-button" onclick="signup()" data-description="زر لإنشاء حساب جديد">إنشاء الحساب</button>
+          </div>          
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        async function signup() {
+            const fullName = document.getElementById("fullname").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const confirmPassword = document.getElementById("confirm-password").value.trim();
+
+            if (fullName === "" || email === "" || phone === "" || password === "" || confirmPassword === "") {
+                alert("يرجى ملء جميع الحقول المطلوبة!");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("كلمات المرور غير متطابقة!");
+                return;
+            }
+
+            const users = getUsers();
+            const existingUser = users.find(user => user.email === email);
+            if (existingUser) {
+                alert("البريد الإلكتروني مسجل بالفعل!");
+                return;
+            }
+
+            const hashedPassword = await hashPassword(password);
+            const token = generateToken(32);
+            const newUser = {
+                fullName,
+                email,
+                phone,
+                password: hashedPassword,
+                token
+            };
+            users.push(newUser);
+            saveUsers(users);
+            alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

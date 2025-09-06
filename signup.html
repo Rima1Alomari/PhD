@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-key="page_title">إنشاء حساب</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    body {
+       background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg1.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center center;
+      background-size: cover;
+      direction: inherit;
+    }
+
+    .form-box {
+      background: linear-gradient(to right, #3b3b4f, #6b6985);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+
+    .form-box h2 {
+      color: #0dcaf0;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+
+    .form-box input {
+      text-align: center;
+      border-radius: 30px !important;
+      padding: 10px;
+    }
+
+    .submit-button {
+      background-color: transparent;
+      color: #0dcaf0;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 30px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      border: 1px solid #0dcaf0;
+    }
+
+    .submit-button:hover {
+      background-color: #0dcaf0;
+      color: white;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="logo.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.html" data-key="nav_home">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="url_check.html" data-key="nav_url">فحص الروابط</a></li>
+        <li class="nav-item"><a class="nav-link" href="email.html" data-key="nav_email">فحص البريد الإلكتروني</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html" data-key="nav_about">معلومات</a></li>
+        <li class="nav-item"><a class="nav-link" href="contactus.html" data-key="nav_contact">اتصل بنا</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <a id="auth-button" href="login.html" class="btn btn-outline-light" data-key="nav_login">تسجيل دخول</a>
+        <select id="languageSelect" class="form-select form-select-sm bg-dark text-white border-light">
+          <option value="ar" selected>العربية</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+  <div class="form-box">
+    <h2 data-key="signup_title" class="text-center">إنشاء حساب</h2>
+
+    <div class="mb-3">
+      <input type="text" class="form-control" id="fullname" placeholder="الاسم الكامل" data-key-placeholder="placeholder_fullname" required />
+    </div>
+
+    <div class="mb-3">
+      <input type="email" class="form-control" id="email" placeholder="البريد الإلكتروني" data-key-placeholder="placeholder_email" required />
+    </div>
+
+    <div class="mb-3">
+      <input type="text" class="form-control" id="phone" placeholder="رقم الهاتف" data-key-placeholder="placeholder_phone" required />
+    </div>
+
+    <div class="mb-3">
+      <input type="password" class="form-control" id="password" placeholder="كلمة المرور" data-key-placeholder="placeholder_password" required />
+    </div>
+
+    <div class="mb-3">
+      <input type="password" class="form-control" id="confirm-password" placeholder="تأكيد كلمة المرور" data-key-placeholder="placeholder_confirm" required />
+    </div>
+
+    <button class="submit-button" onclick="signup()" data-key="btn_signup">إنشاء الحساب</button>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  async function signup() {
+    const fullName = document.getElementById("fullname").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirm-password").value.trim();
+    if (fullName === "" || email === "" || phone === "" || password === "" || confirmPassword === "") {
+      alert("يرجى ملء جميع الحقول المطلوبة!");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("كلمات المرور غير متطابقة!");
+      return;
+    }
+    const users = getUsers();
+    const existingUser = users.find(user => user.email === email);
+    if (existingUser) {
+      alert("البريد الإلكتروني مسجل بالفعل!");
+      return;
+    }
+    const hashedPassword = await hashPassword(password);
+    const token = generateToken(32);
+    const newUser = { fullName, email, phone, password: hashedPassword, token };
+    users.push(newUser);
+    saveUsers(users);
+    alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
+    window.location.href = "login.html";
+  }
+
+  const translations = {
+    ar: {
+      nav_home: "الرئيسية",
+      nav_login: "تسجيل دخول",
+      nav_signup: "إنشاء حساب",
+      page_title: "إنشاء حساب",
+      signup_title: "إنشاء حساب",
+      placeholder_fullname: "الاسم الكامل",
+      placeholder_email: "البريد الإلكتروني",
+      placeholder_phone: "رقم الهاتف",
+      placeholder_password: "كلمة المرور",
+      placeholder_confirm: "تأكيد كلمة المرور",
+      btn_signup: "إنشاء الحساب"
+    },
+    en: {
+      nav_home: "Home",
+      nav_login: "Login",
+      nav_signup: "Create Account",
+      page_title: "Create Account",
+      signup_title: "Create Account",
+      placeholder_fullname: "Full Name",
+      placeholder_email: "Email",
+      placeholder_phone: "Phone Number",
+      placeholder_password: "Password",
+      placeholder_confirm: "Confirm Password",
+      btn_signup: "Create Account"
+    }
+  };
+
+  function updateTranslations(lang) {
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.getAttribute('data-key');
+      if (translations[lang] && translations[lang][key]) {
+        el.textContent = translations[lang][key];
+      }
+    });
+    document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-key-placeholder');
+      if (translations[lang] && translations[lang][key]) {
+        el.placeholder = translations[lang][key];
+      }
+    });
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === 'en') ? 'ltr' : 'rtl';
+    document.title = translations[lang].page_title;
+  }
+
+  document.getElementById('languageSelect').addEventListener('change', function () {
+    updateTranslations(this.value);
+  });
+
+  updateTranslations(document.getElementById('languageSelect').value);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

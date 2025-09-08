@@ -1,4 +1,4 @@
-# phishing_detection
+# Phishing Detection
 
 This project is an **AI-powered Phishing Detector** that helps users identify and avoid malicious links.  
 It provides an interactive web application that analyzes URLs and detects potential phishing attempts.
